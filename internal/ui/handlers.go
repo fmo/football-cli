@@ -13,6 +13,13 @@ import (
 	footballdataapi "github.com/fmo/football-data-api"
 )
 
+func refreshHandler() tea.Msg {
+	if err := os.Remove("data/standings.json"); err != nil {
+		log.Println("cant refresh data: ", err)
+	}
+	return refreshSuccessMsg("refreshed the data")
+}
+
 func standingsHandler() tea.Msg {
 	// check if there is standings in the data folder
 	f, err := os.Open("data/standings.json")
@@ -21,7 +28,7 @@ func standingsHandler() tea.Msg {
 	}
 	defer f.Close()
 
-	var resp footballdataapi.RespCompStandings
+	var resp *footballdataapi.RespCompStandings
 
 	// could not open file so read it from api
 	if err != nil {
@@ -29,7 +36,7 @@ func standingsHandler() tea.Msg {
 		client := footballdataapi.NewClient(&http.Client{Timeout: 10 * time.Second})
 		compReq := footballdataapi.NewReqCompStandings(client)
 
-		resp, err := compReq.Do()
+		resp, err = compReq.Do()
 		if err != nil {
 			return nil
 		}
@@ -51,12 +58,14 @@ func standingsHandler() tea.Msg {
 		}
 	} else {
 		log.Println("reading data from the file")
+
 		r, err := io.ReadAll(f)
 		if err != nil {
 			log.Println("cant read the data from the json file: ", err)
 		}
 		if err := json.Unmarshal(r, &resp); err != nil {
 			log.Println("cant unmarshal: ", err)
+			return errMsg{err}
 		}
 	}
 

@@ -15,8 +15,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "enter":
 			if item, ok := m.list.SelectedItem().(item); ok {
-				if item.Title() == "Games" {
+				if item.Title() == "Matches" {
 					return m, matchesHandler
+				}
+				if item.Title() == "Refresh Data" {
+					return m, refreshHandler
 				}
 			}
 		}
@@ -26,6 +29,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case standingsMsg:
 		m.teams = msg.teams
 		m.table.SetRows(buildRows(msg.teams))
+	case refreshSuccessMsg:
+		m.refreshSuccess = string(msg)
+	case errMsg:
+		m.err = msg.err
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v)

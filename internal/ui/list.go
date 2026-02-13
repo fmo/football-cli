@@ -25,7 +25,11 @@ type menu struct {
 
 func (m menu) New() *menu {
 	m.list = list.New(
-		[]list.Item{item{"Standings", "Standing"}, item{"Games", "Game List"}},
+		[]list.Item{
+			item{"Standings", "Standing"},
+			item{"Matches", "Match List"},
+			item{"Refresh Data", "Update Data"},
+		},
 		list.NewDefaultDelegate(),
 		0, 0)
 
