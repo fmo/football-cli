@@ -11,33 +11,35 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "q":
+			return m, tea.Quit
 		case "enter":
-			if it, ok := m.list.SelectedItem().(item); ok {
-				if it.Title() == "Games" {
+			if item, ok := m.list.SelectedItem().(item); ok {
+				if item.Title() == "Games" {
 					return m, matchesHandler
 				}
 			}
-		case "q":
-			return m, tea.Quit
 		}
-	case tea.WindowSizeMsg:
-		h, v := docStyle.GetFrameSize()
-		m.list.SetSize(msg.Width-h, msg.Height-v)
+	case matchesMsg:
+		m.matches = msg.matches
+		m.matchesTable.SetRows(buildMatches(msg.matches))
 	case standingsMsg:
 		m.teams = msg.teams
 		m.table.SetRows(buildRows(msg.teams))
-	case matchesMsg:
-		m.matches = msg.matches
-		m.table.SetRows(buildMatches(msg.matches))
+	case tea.WindowSizeMsg:
+		h, v := docStyle.GetFrameSize()
+		m.list.SetSize(msg.Width-h, msg.Height-v)
 	}
 
 	var tableCmd tea.Cmd
 	var listCmd tea.Cmd
+	var matchesTableCmd tea.Cmd
 
 	m.list, listCmd = m.list.Update(msg)
 	m.table, tableCmd = m.table.Update(msg)
+	m.matchesTable, matchesTableCmd = m.matchesTable.Update(msg)
 
-	return m, tea.Batch(tableCmd, listCmd)
+	return m, tea.Batch(tableCmd, listCmd, matchesTableCmd)
 }
 
 func buildRows(teams []team) []table.Row {

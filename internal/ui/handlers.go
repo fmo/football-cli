@@ -1,8 +1,12 @@
 package ui
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -10,12 +14,50 @@ import (
 )
 
 func standingsHandler() tea.Msg {
-	client := footballdataapi.NewClient(&http.Client{Timeout: 10 * time.Second})
-	compReq := footballdataapi.NewReqCompStandings(client)
-
-	resp, err := compReq.Do()
+	// check if there is standings in the data folder
+	f, err := os.Open("data/standings.json")
 	if err != nil {
-		return nil
+		log.Println(err)
+	}
+	defer f.Close()
+
+	var resp footballdataapi.RespCompStandings
+
+	// could not open file so read it from api
+	if err != nil {
+		log.Println("making api call")
+		client := footballdataapi.NewClient(&http.Client{Timeout: 10 * time.Second})
+		compReq := footballdataapi.NewReqCompStandings(client)
+
+		resp, err := compReq.Do()
+		if err != nil {
+			return nil
+		}
+
+		f, err = os.OpenFile("data/standings.json", os.O_RDWR|os.O_CREATE, 0644)
+		if err != nil {
+			log.Println("opening file error: ", err)
+		}
+		defer f.Close()
+
+		jsonStandings, err := json.Marshal(resp)
+		if err != nil {
+			log.Println("marshalling error: ", err)
+		}
+
+		_, err = f.Write(jsonStandings)
+		if err != nil {
+			log.Println("file write error: ", err)
+		}
+	} else {
+		log.Println("reading data from the file")
+		r, err := io.ReadAll(f)
+		if err != nil {
+			log.Println("cant read the data from the json file: ", err)
+		}
+		if err := json.Unmarshal(r, &resp); err != nil {
+			log.Println("cant unmarshal: ", err)
+		}
 	}
 
 	sm := standingsMsg{}

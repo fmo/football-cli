@@ -5,6 +5,11 @@ import (
 )
 
 func (m model) RightView() string {
+	if item, ok := m.list.SelectedItem().(item); ok {
+		if item.Title() == "Games" {
+			return baseStyle.Render(m.matchesTable.View())
+		}
+	}
 	return baseStyle.Render(m.table.View())
 }
 

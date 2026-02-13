@@ -6,10 +6,11 @@ import (
 )
 
 type model struct {
-	list    list.Model
-	teams   []team
-	table   table.Model
-	matches []match
+	list         list.Model
+	teams        []team
+	table        table.Model
+	matchesTable table.Model
+	matches      []match
 }
 
 type team struct {
