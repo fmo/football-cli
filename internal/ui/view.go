@@ -15,12 +15,22 @@ func (m model) refreshView() string {
 }
 
 func (m model) matchesView() string {
-	topStyle := lipgloss.NewStyle().PaddingLeft(19)
+	topStyle := lipgloss.NewStyle().PaddingLeft(2)
+	buttonStyle := lipgloss.NewStyle().
+		Padding(0, 1).
+		BorderStyle(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color("39"))
 	bottomStyle := lipgloss.NewStyle()
+
+	top := lipgloss.JoinHorizontal(
+		lipgloss.Center,
+		topStyle.Render(fmt.Sprintf("Matchday %d", m.currentMatchDay)),
+		topStyle.Render(buttonStyle.Render("Next Matchday (n)")),
+	)
 
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
-		topStyle.Render(fmt.Sprintf("Matchday %d", m.currentMatchDay)),
+		top,
 		bottomStyle.Render(m.matchesTable.View()))
 }
 

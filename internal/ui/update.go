@@ -13,6 +13,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "q":
 			return m, tea.Quit
+		case "n":
+			if item, ok := m.list.SelectedItem().(item); ok {
+				if item.Title() == "Matches" {
+					return m, matchesHandler(m.currentMatchDay + 1)
+				}
+			}
 		case "enter":
 			if item, ok := m.list.SelectedItem().(item); ok {
 				if item.Title() == "Matches" {

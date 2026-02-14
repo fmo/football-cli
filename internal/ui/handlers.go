@@ -15,7 +15,7 @@ import (
 
 const (
 	standingsFile = "data/standings.json"
-	matchesFile   = "data/matches.json"
+	matchesFile   = "data/matchdays"
 )
 
 const seasonYear = 2025
@@ -89,7 +89,9 @@ func matchesHandler(currentMatchDay int) tea.Cmd {
 
 		log.Println("reading matches data form the file")
 
-		r, err := readData(matchesFile)
+		matchdayFile := fmt.Sprintf("%s/%d.json", matchesFile, currentMatchDay)
+
+		r, err := readData(matchdayFile)
 		if err != nil {
 			log.Println("cant read matches from the file:", err)
 		}
@@ -114,7 +116,7 @@ func matchesHandler(currentMatchDay int) tea.Cmd {
 				log.Println("marshaling error: ", err)
 			}
 
-			if err := writeData(data, matchesFile); err != nil {
+			if err := writeData(data, matchdayFile); err != nil {
 				log.Println("writing data problem")
 			}
 		}
