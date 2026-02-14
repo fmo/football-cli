@@ -10,10 +10,6 @@ import (
 
 var docStyle = lipgloss.NewStyle().MarginTop(10).MarginLeft(10)
 
-var baseStyle = lipgloss.NewStyle().
-	BorderStyle(lipgloss.NormalBorder()).
-	BorderForeground(lipgloss.Color("240"))
-
 func (m model) Init() tea.Cmd {
 	return standingsHandler
 }
