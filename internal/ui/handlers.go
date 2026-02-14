@@ -2,7 +2,6 @@ package ui
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -34,15 +33,21 @@ func refreshHandler() tea.Msg {
 }
 
 func standingsHandler() tea.Msg {
-	fileExist, err := fileExist(standingsFile)
-	if err != nil {
-		log.Println(err)
-	}
-
 	var resp *footballdataapi.RespCompStandings
 
-	// could not open file so read it from api
-	if !fileExist {
+	log.Println("reading standing data from the file")
+
+	r, err := readData(standingsFile)
+	if err != nil {
+		log.Println("cant read standing data:", err)
+	}
+
+	if err := json.Unmarshal(r, &resp); err != nil {
+		log.Println("cant unmarshal:", err)
+	}
+
+	// could read data from the standing file, so read it from api
+	if err != nil {
 		log.Println("making api call for standings")
 
 		client := footballdataapi.NewClient(&http.Client{Timeout: 10 * time.Second})
@@ -50,7 +55,7 @@ func standingsHandler() tea.Msg {
 
 		resp, err = compReq.Do(footballdataapi.PL, seasonYear)
 		if err != nil {
-			return nil
+			log.Println("cant get response:", err)
 		}
 
 		data, err := json.Marshal(resp)
@@ -60,18 +65,6 @@ func standingsHandler() tea.Msg {
 
 		if err := writeData(data, standingsFile); err != nil {
 			log.Println("writing data problem")
-		}
-	} else {
-		log.Println("reading standing data from the file")
-
-		r, err := readData(standingsFile)
-		if err != nil {
-			log.Println(err)
-		}
-
-		if err := json.Unmarshal(r, &resp); err != nil {
-			log.Println("cant unmarshal: ", err)
-			return errMsg{errors.New("cant unmarshal the data")}
 		}
 	}
 
@@ -92,18 +85,20 @@ func standingsHandler() tea.Msg {
 
 func matchesHandler(currentMatchDay int) tea.Cmd {
 	return func() tea.Msg {
-		matchesFileExist, err := fileExist(matchesFile)
-		if err != nil {
-			log.Println("cant check if match data file exist: ", err)
-		}
-
-		if currentMatchDay == 0 {
-			return nil
-		}
-
 		var resp *footballdataapi.RespMatches
 
-		if !matchesFileExist {
+		log.Println("reading matches data form the file")
+
+		r, err := readData(matchesFile)
+		if err != nil {
+			log.Println("cant read matches from the file:", err)
+		}
+
+		if err := json.Unmarshal(r, &resp); err != nil {
+			log.Println("cant unmarshal: ", err)
+		}
+
+		if err != nil {
 			log.Printf("requesting matches for season: %d, matchday: %d\n", seasonYear, currentMatchDay)
 
 			client := footballdataapi.NewClient(&http.Client{Timeout: 10 * time.Second})
@@ -121,18 +116,6 @@ func matchesHandler(currentMatchDay int) tea.Cmd {
 
 			if err := writeData(data, matchesFile); err != nil {
 				log.Println("writing data problem")
-			}
-		} else {
-			log.Println("reading matches data form the file")
-
-			r, err := readData(matchesFile)
-			if err != nil {
-				log.Println(err)
-			}
-
-			if err := json.Unmarshal(r, &resp); err != nil {
-				log.Println("cant unmarshal: ", err)
-				return errMsg{errors.New("cant unmarshal the data")}
 			}
 		}
 
@@ -158,20 +141,10 @@ func readData(filename string) ([]byte, error) {
 
 	r, err := io.ReadAll(f)
 	if err != nil {
-		log.Println("cant read the data from the json file: ", err)
+		return nil, err
 	}
 
 	return r, nil
-}
-
-func fileExist(filename string) (bool, error) {
-	f, err := os.Open(filename)
-	if err != nil {
-		return false, err
-	}
-	defer f.Close()
-
-	return true, nil
 }
 
 func writeData(data []byte, filename string) error {
