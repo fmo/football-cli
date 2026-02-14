@@ -1,46 +1,48 @@
 package ui
 
 import (
+	"fmt"
+
 	"github.com/charmbracelet/lipgloss"
 )
+
+func (m model) refreshView() string {
+	if m.refreshSuccess != "" {
+		return m.refreshSuccess
+	}
+
+	return "do refresh"
+}
+
+func (m model) matchesView() string {
+	topStyle := lipgloss.NewStyle().PaddingLeft(19)
+	bottomStyle := lipgloss.NewStyle()
+
+	return lipgloss.JoinVertical(
+		lipgloss.Top,
+		topStyle.Render(fmt.Sprintf("Matchday %d", m.currentMatchDay)),
+		bottomStyle.Render(m.matchesTable.View()))
+}
 
 func (m model) RightView() string {
 	baseStyle := lipgloss.NewStyle().
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(lipgloss.Color("240"))
 
-	s := ""
-
 	if m.err != nil {
-		s += baseStyle.Render(m.err.Error())
+		return baseStyle.Render(m.err.Error())
 	}
 
 	if item, ok := m.list.SelectedItem().(item); ok {
 		if item.Title() == "Matches" {
-			s += baseStyle.Render(m.matchesTable.View())
+			return baseStyle.Render(m.matchesView())
 		}
 		if item.Title() == "Refresh Data" {
-			if m.refreshSuccess != "" {
-				s += baseStyle.Render(m.refreshSuccess)
-			} else {
-				s += baseStyle.Render("do refresh")
-			}
+			return baseStyle.Render(m.refreshView())
 		}
 	}
 
-	if s == "" {
-		s += m.table.View()
-	}
-
-	topStyle := lipgloss.NewStyle()
-	bottomStyle := lipgloss.NewStyle()
-
-	page := lipgloss.JoinVertical(
-		lipgloss.Top,
-		topStyle.Render("26th Match Day"),
-		bottomStyle.Render(s))
-
-	return baseStyle.Render(page)
+	return baseStyle.Render(m.table.View())
 }
 
 func (m model) View() string {

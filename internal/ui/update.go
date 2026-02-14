@@ -27,6 +27,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.matches = msg.matches
 		m.matchesTable.SetRows(buildMatches(msg.matches))
 	case standingsMsg:
+		m.currentMatchDay = msg.currentMatchDay
 		m.teams = msg.teams
 		m.table.SetRows(buildRows(msg.teams))
 		return m, matchesHandler(msg.currentMatchDay)

@@ -60,6 +60,7 @@ func (mt matchesTable) New() *matchesTable {
 	s.Header = s.Header.
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(lipgloss.Color("240")).
+		BorderTop(true).
 		BorderBottom(true).
 		Bold(false)
 
