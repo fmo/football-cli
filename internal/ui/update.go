@@ -16,7 +16,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			if item, ok := m.list.SelectedItem().(item); ok {
 				if item.Title() == "Matches" {
-					return m, matchesHandler
+					return m, matchesHandler(m.currentMatchDay)
 				}
 				if item.Title() == "Refresh Data" {
 					return m, refreshHandler
@@ -29,6 +29,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case standingsMsg:
 		m.teams = msg.teams
 		m.table.SetRows(buildRows(msg.teams))
+		return m, matchesHandler(msg.currentMatchDay)
 	case refreshSuccessMsg:
 		m.refreshSuccess = string(msg)
 	case errMsg:
@@ -38,15 +39,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list.SetSize(msg.Width-h, msg.Height-v)
 	}
 
-	var tableCmd tea.Cmd
-	var listCmd tea.Cmd
-	var matchesTableCmd tea.Cmd
+	var listCmd, tableCmd, matchesTableCmd tea.Cmd
 
 	m.list, listCmd = m.list.Update(msg)
 	m.table, tableCmd = m.table.Update(msg)
 	m.matchesTable, matchesTableCmd = m.matchesTable.Update(msg)
 
-	return m, tea.Batch(tableCmd, listCmd, matchesTableCmd)
+	return m, tea.Batch(tableCmd, matchesTableCmd, listCmd)
 }
 
 func buildRows(teams []team) []table.Row {

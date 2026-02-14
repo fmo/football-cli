@@ -14,7 +14,11 @@ func (m model) RightView() string {
 			return baseStyle.Render(m.matchesTable.View())
 		}
 		if item.Title() == "Refresh Data" {
-			return baseStyle.Render(m.refreshSuccess)
+			if m.refreshSuccess != "" {
+				return baseStyle.Render(m.refreshSuccess)
+			} else {
+				return baseStyle.Render("do refresh")
+			}
 		}
 	}
 	return baseStyle.Render(m.table.View())

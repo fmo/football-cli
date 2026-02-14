@@ -3,7 +3,8 @@ package ui
 type refreshSuccessMsg string
 
 type standingsMsg struct {
-	teams []team
+	currentMatchDay int
+	teams           []team
 }
 
 type matchesMsg struct {

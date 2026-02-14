@@ -18,7 +18,6 @@ func (st standingsTable) New() *standingsTable {
 
 	t := table.New(
 		table.WithColumns(columns),
-		table.WithFocused(true),
 		table.WithHeight(21),
 		table.WithWidth(50),
 	)
@@ -54,8 +53,7 @@ func (mt matchesTable) New() *matchesTable {
 
 	t := table.New(
 		table.WithColumns(columns),
-		table.WithFocused(true),
-		table.WithHeight(21),
+		table.WithHeight(12),
 	)
 
 	s := table.DefaultStyles()

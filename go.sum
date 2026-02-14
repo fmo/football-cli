@@ -32,6 +32,10 @@ github.com/fmo/football-data-api v0.1.0 h1:kOAGDOuEhKrvKvne0nYiykri5ezDFFQVL8Ieu
 github.com/fmo/football-data-api v0.1.0/go.mod h1:ZKVRcfeJrnWrREqJPZCsyFrZJsGe0vX65qvQyW2PzdQ=
 github.com/fmo/football-data-api v0.2.0 h1:EVRukeqI5O8ao6HeAJ6t7t9Kt0B5zup9rRszupujLFk=
 github.com/fmo/football-data-api v0.2.0/go.mod h1:ZKVRcfeJrnWrREqJPZCsyFrZJsGe0vX65qvQyW2PzdQ=
+github.com/fmo/football-data-api v0.3.0 h1:S5E0/+HJsDeY3T2LwSm+m9VmNngizge61qp9lQJCiwc=
+github.com/fmo/football-data-api v0.3.0/go.mod h1:ZKVRcfeJrnWrREqJPZCsyFrZJsGe0vX65qvQyW2PzdQ=
+github.com/fmo/football-data-api v0.4.0 h1:VegB5m+LpOyLZEf7Ie7JVpnyrOxcIyD25qWamaDukEg=
+github.com/fmo/football-data-api v0.4.0/go.mod h1:ZKVRcfeJrnWrREqJPZCsyFrZJsGe0vX65qvQyW2PzdQ=
 github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0SNc=
 github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
 github.com/lucasb-eyer/go-colorful v1.3.0 h1:2/yBRLdWBZKrf7gB40FoiKfAWYQ0lqNcbuQwVHXptag=
