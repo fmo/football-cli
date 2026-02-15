@@ -2,6 +2,7 @@ package ui
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -39,7 +40,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case matchesMsg:
 		m.matches = msg.matches
-		m.matchesTable.SetRows(buildMatches(msg.matches))
+		matchesMap := make(map[string][]match)
+
+		for _, match := range msg.matches {
+			matchDate := match.utcDate.Format(time.DateOnly)
+			matchesMap[matchDate] = append(matchesMap[matchDate], match)
+		}
+
+		for _, mm := range matchesMap {
+			matchesTable := NewMatchesTable()
+			matchesTable.table.SetRows(buildMatches(mm))
+		}
+
+		//m.matchesTable.SetRows(buildMatches(msg.matches))
 	case standingsMsg:
 		m.currentMatchDay = msg.currentMatchDay
 		m.teams = msg.teams
@@ -58,7 +71,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	m.list, listCmd = m.list.Update(msg)
 	m.table, tableCmd = m.table.Update(msg)
-	m.matchesTable, matchesTableCmd = m.matchesTable.Update(msg)
+	//m.matchesTable, matchesTableCmd = m.matchesTable.Update(msg)
 
 	return m, tea.Batch(tableCmd, matchesTableCmd, listCmd)
 }
@@ -77,7 +90,7 @@ func buildRows(teams []team) []table.Row {
 func buildMatches(matches []match) []table.Row {
 	rows := []table.Row{}
 	for _, match := range matches {
-		rows = append(rows, table.Row{match.homeTeam, match.awayTeam, match.score, match.utcDate.String()})
+		rows = append(rows, table.Row{match.homeTeam, match.awayTeam, match.score})
 	}
 	return rows
 }

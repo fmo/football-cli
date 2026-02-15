@@ -41,7 +41,7 @@ func NewStandingsTable() *standingsTable {
 }
 
 type matchesTable struct {
-	table table.Model
+	table *table.Model
 }
 
 func NewMatchesTable() *matchesTable {
@@ -49,7 +49,6 @@ func NewMatchesTable() *matchesTable {
 		{Title: "Home Team", Width: 20},
 		{Title: "Away Team", Width: 20},
 		{Title: "Score", Width: 10},
-		{Title: "Date", Width: 30},
 	}
 
 	t := table.New(

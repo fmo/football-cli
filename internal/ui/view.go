@@ -32,7 +32,8 @@ func (m model) matchesView() string {
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
 		m.matchesTopView(),
-		bottomStyle.Render(m.matchesTable.View()))
+		//bottomStyle.Render(m.matchesTable.View()))
+		bottomStyle.Render("hello"))
 }
 
 func (m model) RightView() string {
