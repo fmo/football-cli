@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"time"
+
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/table"
 )
@@ -26,4 +28,5 @@ type match struct {
 	homeTeam string
 	awayTeam string
 	score    string
+	utcDate  time.Time
 }

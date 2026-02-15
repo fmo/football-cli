@@ -127,6 +127,7 @@ func matchesHandler(currentMatchDay int) tea.Cmd {
 			match.homeTeam = m.HomeTeam.Name
 			match.awayTeam = m.AwayTeam.Name
 			match.score = fmt.Sprintf("%d-%d", m.Score.FullTime.Home, m.Score.FullTime.Away)
+			match.utcDate = m.UtcDate
 			mm.matches = append(mm.matches, match)
 		}
 

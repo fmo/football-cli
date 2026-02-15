@@ -77,7 +77,7 @@ func buildRows(teams []team) []table.Row {
 func buildMatches(matches []match) []table.Row {
 	rows := []table.Row{}
 	for _, match := range matches {
-		rows = append(rows, table.Row{match.homeTeam, match.awayTeam, match.score})
+		rows = append(rows, table.Row{match.homeTeam, match.awayTeam, match.score, match.utcDate.String()})
 	}
 	return rows
 }

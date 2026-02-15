@@ -9,7 +9,7 @@ type standingsTable struct {
 	table table.Model
 }
 
-func (st standingsTable) New() *standingsTable {
+func NewStandingsTable() *standingsTable {
 	columns := []table.Column{
 		{Title: "Position", Width: 8},
 		{Title: "Team", Width: 30},
@@ -44,11 +44,12 @@ type matchesTable struct {
 	table table.Model
 }
 
-func (mt matchesTable) New() *matchesTable {
+func NewMatchesTable() *matchesTable {
 	columns := []table.Column{
 		{Title: "Home Team", Width: 20},
 		{Title: "Away Team", Width: 20},
 		{Title: "Score", Width: 10},
+		{Title: "Date", Width: 30},
 	}
 
 	t := table.New(

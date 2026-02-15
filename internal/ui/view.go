@@ -58,7 +58,7 @@ func (m model) RightView() string {
 
 func (m model) View() string {
 	leftStyle := lipgloss.NewStyle().Width(40).Padding(0, 1)
-	rightStyle := lipgloss.NewStyle().Width(80).Padding(0, 1)
+	rightStyle := lipgloss.NewStyle().Width(100).Padding(0, 1)
 
 	page := lipgloss.JoinHorizontal(
 		lipgloss.Top,
