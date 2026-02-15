@@ -14,23 +14,24 @@ func (m model) refreshView() string {
 	return "do refresh"
 }
 
-func (m model) matchesView() string {
-	topStyle := lipgloss.NewStyle().PaddingLeft(2)
-	buttonStyle := lipgloss.NewStyle().
-		Padding(0, 1).
-		BorderStyle(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("39"))
-	bottomStyle := lipgloss.NewStyle()
+func (m model) matchesTopView() string {
+	commonStyle := lipgloss.NewStyle().PaddingLeft(2)
 
-	top := lipgloss.JoinHorizontal(
-		lipgloss.Center,
-		topStyle.Render(fmt.Sprintf("Matchday %d", m.currentMatchDay)),
-		topStyle.Render(buttonStyle.Render("Next Matchday (n)")),
+	buttonStyle := lipgloss.NewStyle().Width(40).Align(lipgloss.Right)
+
+	return lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		commonStyle.Render(fmt.Sprintf("Matchday %d", m.currentMatchDay)),
+		buttonStyle.Render("(p)rev | (n)ext"),
 	)
+}
+
+func (m model) matchesView() string {
+	bottomStyle := lipgloss.NewStyle()
 
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
-		top,
+		m.matchesTopView(),
 		bottomStyle.Render(m.matchesTable.View()))
 }
 

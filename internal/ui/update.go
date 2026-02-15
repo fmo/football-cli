@@ -16,7 +16,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "n":
 			if item, ok := m.list.SelectedItem().(item); ok {
 				if item.Title() == "Matches" {
-					return m, matchesHandler(m.currentMatchDay + 1)
+					m.currentMatchDay++
+					return m, matchesHandler(m.currentMatchDay)
+				}
+			}
+		case "p":
+			if item, ok := m.list.SelectedItem().(item); ok {
+				if item.Title() == "Matches" {
+					m.currentMatchDay--
+					return m, matchesHandler(m.currentMatchDay)
 				}
 			}
 		case "enter":
