@@ -2,7 +2,7 @@ package ui
 
 import (
 	"fmt"
-	"strings"
+	"time"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -16,7 +16,7 @@ func (m model) refreshView() string {
 }
 
 func (m model) matchesTopView() string {
-	commonStyle := lipgloss.NewStyle().PaddingLeft(2)
+	commonStyle := lipgloss.NewStyle()
 
 	buttonStyle := lipgloss.NewStyle().Width(40).Align(lipgloss.Right)
 
@@ -28,35 +28,34 @@ func (m model) matchesTopView() string {
 }
 
 func (m model) matchesView() string {
-	bottomStyle := lipgloss.NewStyle()
+	matchesMap := make(map[string][]match)
 
-	allTables := []string{}
-	i := 0
-	for _, md := range m.matchesDates {
-		if i == 0 {
-			allTables = append(allTables, lipgloss.JoinVertical(
-				lipgloss.Top,
-				m.matchesTopView(),
-				lipgloss.NewStyle().Padding(0, 2).BorderStyle(lipgloss.NormalBorder()).Render(md),
-				bottomStyle.Render(m.matchesTables[i].View())),
-			)
-			i++
-			continue
+	matchesDates := make([]string, 0)
+
+	for _, match := range m.matches {
+		matchDate := match.utcDate.Format(time.DateOnly)
+		if _, exists := matchesMap[matchDate]; !exists {
+			matchesDates = append(matchesDates, matchDate)
 		}
 
-		m.matchesTables[i].Columns()
-		remaining := lipgloss.JoinVertical(
-			lipgloss.Top,
-			lipgloss.NewStyle().Padding(0, 2).BorderStyle(lipgloss.NormalBorder()).Render(md),
-			bottomStyle.Render(m.matchesTables[i].View()),
-		)
-
-		allTables = append(allTables, remaining)
-
-		i++
+		matchesMap[matchDate] = append(matchesMap[matchDate], match)
 	}
 
-	return strings.Join(allTables, "\n")
+	s := ""
+	for _, md := range matchesDates {
+		s += lipgloss.NewStyle().Render(md)
+
+		for _, match := range matchesMap[md] {
+			s += lipgloss.NewStyle().Background(lipgloss.Color("23")).Render(fmt.Sprintf("%s %s %s", match.homeTeam, match.awayTeam, match.score))
+		}
+		s += "\n"
+	}
+
+	return lipgloss.JoinVertical(
+		lipgloss.Top,
+		m.matchesTopView()+"\n",
+		s,
+	)
 }
 
 func (m model) RightView() string {

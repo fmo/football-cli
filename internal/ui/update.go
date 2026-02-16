@@ -2,7 +2,6 @@ package ui
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -39,33 +38,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 	case matchesMsg:
-		// update matches model with retrieved matches from the api
 		m.matches = msg.matches
-
-		// need a map for the matches
-		matchesMap := make(map[string][]match)
-
-		// need a map for match dates
-		matchesDates := make([]string, 0)
-
-		// put the matches into the map with the matchDate key 2026-02-10
-		for _, match := range msg.matches {
-			matchDate := match.utcDate.Format(time.DateOnly)
-			if _, exists := matchesMap[matchDate]; !exists {
-				matchesDates = append(matchesDates, matchDate)
-			}
-
-			matchesMap[matchDate] = append(matchesMap[matchDate], match)
-		}
-
-		m.matchesDates = matchesDates
-
-		// create tables for each date
-		for _, mm := range matchesMap {
-			matchesTable := NewMatchesTable()
-			matchesTable.table.SetRows(buildMatches(mm))
-			m.matchesTables = append(m.matchesTables, matchesTable.table)
-		}
 	case standingsMsg:
 		m.currentMatchDay = msg.currentMatchDay
 		m.teams = msg.teams
@@ -96,13 +69,5 @@ func buildRows(teams []team) []table.Row {
 		rows = append(rows, table.Row{position, team.name, points})
 	}
 
-	return rows
-}
-
-func buildMatches(matches []match) []table.Row {
-	rows := []table.Row{}
-	for _, match := range matches {
-		rows = append(rows, table.Row{match.homeTeam, match.awayTeam, match.score})
-	}
 	return rows
 }
