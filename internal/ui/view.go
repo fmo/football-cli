@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -29,11 +30,33 @@ func (m model) matchesTopView() string {
 func (m model) matchesView() string {
 	bottomStyle := lipgloss.NewStyle()
 
-	return lipgloss.JoinVertical(
-		lipgloss.Top,
-		m.matchesTopView(),
-		//bottomStyle.Render(m.matchesTable.View()))
-		bottomStyle.Render("hello"))
+	allTables := []string{}
+	i := 0
+	for _, md := range m.matchesDates {
+		if i == 0 {
+			allTables = append(allTables, lipgloss.JoinVertical(
+				lipgloss.Top,
+				m.matchesTopView(),
+				lipgloss.NewStyle().Padding(0, 2).BorderStyle(lipgloss.NormalBorder()).Render(md),
+				bottomStyle.Render(m.matchesTables[i].View())),
+			)
+			i++
+			continue
+		}
+
+		m.matchesTables[i].Columns()
+		remaining := lipgloss.JoinVertical(
+			lipgloss.Top,
+			lipgloss.NewStyle().Padding(0, 2).BorderStyle(lipgloss.NormalBorder()).Render(md),
+			bottomStyle.Render(m.matchesTables[i].View()),
+		)
+
+		allTables = append(allTables, remaining)
+
+		i++
+	}
+
+	return strings.Join(allTables, "\n")
 }
 
 func (m model) RightView() string {

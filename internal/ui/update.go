@@ -39,20 +39,33 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 	case matchesMsg:
+		// update matches model with retrieved matches from the api
 		m.matches = msg.matches
+
+		// need a map for the matches
 		matchesMap := make(map[string][]match)
 
+		// need a map for match dates
+		matchesDates := make([]string, 0)
+
+		// put the matches into the map with the matchDate key 2026-02-10
 		for _, match := range msg.matches {
 			matchDate := match.utcDate.Format(time.DateOnly)
+			if _, exists := matchesMap[matchDate]; !exists {
+				matchesDates = append(matchesDates, matchDate)
+			}
+
 			matchesMap[matchDate] = append(matchesMap[matchDate], match)
 		}
 
+		m.matchesDates = matchesDates
+
+		// create tables for each date
 		for _, mm := range matchesMap {
 			matchesTable := NewMatchesTable()
 			matchesTable.table.SetRows(buildMatches(mm))
+			m.matchesTables = append(m.matchesTables, matchesTable.table)
 		}
-
-		//m.matchesTable.SetRows(buildMatches(msg.matches))
 	case standingsMsg:
 		m.currentMatchDay = msg.currentMatchDay
 		m.teams = msg.teams
@@ -67,13 +80,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list.SetSize(msg.Width-h, msg.Height-v)
 	}
 
-	var listCmd, tableCmd, matchesTableCmd tea.Cmd
+	var listCmd, tableCmd tea.Cmd
 
 	m.list, listCmd = m.list.Update(msg)
 	m.table, tableCmd = m.table.Update(msg)
-	//m.matchesTable, matchesTableCmd = m.matchesTable.Update(msg)
 
-	return m, tea.Batch(tableCmd, matchesTableCmd, listCmd)
+	return m, tea.Batch(tableCmd, listCmd)
 }
 
 func buildRows(teams []team) []table.Row {

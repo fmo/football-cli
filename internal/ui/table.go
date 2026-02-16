@@ -41,10 +41,10 @@ func NewStandingsTable() *standingsTable {
 }
 
 type matchesTable struct {
-	table *table.Model
+	table table.Model
 }
 
-func NewMatchesTable() *matchesTable {
+func NewMatchesTable() matchesTable {
 	columns := []table.Column{
 		{Title: "Home Team", Width: 20},
 		{Title: "Away Team", Width: 20},
@@ -53,7 +53,7 @@ func NewMatchesTable() *matchesTable {
 
 	t := table.New(
 		table.WithColumns(columns),
-		table.WithHeight(12),
+		table.WithHeight(6),
 	)
 
 	s := table.DefaultStyles()
@@ -70,7 +70,7 @@ func NewMatchesTable() *matchesTable {
 		Bold(false)
 	t.SetStyles(s)
 
-	return &matchesTable{
+	return matchesTable{
 		table: t,
 	}
 }

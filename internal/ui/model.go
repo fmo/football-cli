@@ -11,7 +11,8 @@ type model struct {
 	list            list.Model
 	teams           []team
 	table           table.Model
-	matchesTables   []*table.Model
+	matchesTables   []table.Model
+	matchesDates    []string
 	matches         []match
 	refreshSuccess  string
 	err             error
