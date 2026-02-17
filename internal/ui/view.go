@@ -108,7 +108,7 @@ func (m model) matchesView() string {
 
 			s.Write([]byte(row + "\n"))
 		}
-		s.Write([]byte("+= \n"))
+		s.Write([]byte("\n"))
 	}
 
 	return lipgloss.JoinVertical(
