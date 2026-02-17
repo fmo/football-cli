@@ -47,7 +47,7 @@ func (m model) matchesView() string {
 		Padding(0, 1).
 		Bold(true)
 
-	homeStyle := lipgloss.NewStyle().
+	teamStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("255")).
 		Background(lipgloss.Color("236")).
 		Padding(0, 1)
@@ -75,11 +75,11 @@ func (m model) matchesView() string {
 	}
 
 	// Keep the rows compact while still aligning team names.
-	if maxHomeWidth > 24 {
-		maxHomeWidth = 24
+	if maxHomeWidth > 36 {
+		maxHomeWidth = 36
 	}
-	if maxAwayWidth > 24 {
-		maxAwayWidth = 24
+	if maxAwayWidth > 36 {
+		maxAwayWidth = 36
 	}
 	if maxHomeWidth < 12 {
 		maxHomeWidth = 12
@@ -99,10 +99,9 @@ func (m model) matchesView() string {
 
 			row := lipgloss.JoinHorizontal(
 				lipgloss.Top,
-				homeStyle.Render(home),
-				rowStyle.Render("vs"),
-				homeStyle.Render(away),
+				teamStyle.Render(home),
 				scoreStyle.Render(match.score),
+				teamStyle.Render(away),
 				rowStyle.Render(kickoff),
 			)
 

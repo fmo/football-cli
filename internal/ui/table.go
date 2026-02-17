@@ -39,38 +39,3 @@ func NewStandingsTable() *standingsTable {
 		table: t,
 	}
 }
-
-type matchesTable struct {
-	table table.Model
-}
-
-func NewMatchesTable() matchesTable {
-	columns := []table.Column{
-		{Title: "Home Team", Width: 20},
-		{Title: "Away Team", Width: 20},
-		{Title: "Score", Width: 10},
-	}
-
-	t := table.New(
-		table.WithColumns(columns),
-		table.WithHeight(6),
-	)
-
-	s := table.DefaultStyles()
-	s.Header = s.Header.
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		BorderTop(true).
-		BorderBottom(true).
-		Bold(false)
-
-	s.Selected = s.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
-		Bold(false)
-	t.SetStyles(s)
-
-	return matchesTable{
-		table: t,
-	}
-}
