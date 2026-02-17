@@ -39,7 +39,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case matchesMsg:
 		m.matches = msg.matches
-		m.matchesTable.SetRows(buildMatches(msg.matches))
 	case standingsMsg:
 		m.currentMatchDay = msg.currentMatchDay
 		m.teams = msg.teams
@@ -54,13 +53,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list.SetSize(msg.Width-h, msg.Height-v)
 	}
 
-	var listCmd, tableCmd, matchesTableCmd tea.Cmd
+	var listCmd, tableCmd tea.Cmd
 
 	m.list, listCmd = m.list.Update(msg)
 	m.table, tableCmd = m.table.Update(msg)
-	m.matchesTable, matchesTableCmd = m.matchesTable.Update(msg)
 
-	return m, tea.Batch(tableCmd, matchesTableCmd, listCmd)
+	return m, tea.Batch(tableCmd, listCmd)
 }
 
 func buildRows(teams []team) []table.Row {
@@ -71,13 +69,5 @@ func buildRows(teams []team) []table.Row {
 		rows = append(rows, table.Row{position, team.name, points})
 	}
 
-	return rows
-}
-
-func buildMatches(matches []match) []table.Row {
-	rows := []table.Row{}
-	for _, match := range matches {
-		rows = append(rows, table.Row{match.homeTeam, match.awayTeam, match.score})
-	}
 	return rows
 }

@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"time"
+
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/table"
 )
@@ -9,7 +11,8 @@ type model struct {
 	list            list.Model
 	teams           []team
 	table           table.Model
-	matchesTable    table.Model
+	matchesTables   []table.Model
+	matchesDates    []string
 	matches         []match
 	refreshSuccess  string
 	err             error
@@ -26,4 +29,5 @@ type match struct {
 	homeTeam string
 	awayTeam string
 	score    string
+	utcDate  time.Time
 }

@@ -23,9 +23,8 @@ func Render() {
 
 	// Generate menu and standings table
 	m := model{
-		list:         menu{}.New().list,
-		table:        standingsTable{}.New().table,
-		matchesTable: matchesTable{}.New().table,
+		list:  menu{}.New().list,
+		table: NewStandingsTable().table,
 	}
 
 	p := tea.NewProgram(m)

@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -15,7 +16,7 @@ func (m model) refreshView() string {
 }
 
 func (m model) matchesTopView() string {
-	commonStyle := lipgloss.NewStyle().PaddingLeft(2)
+	commonStyle := lipgloss.NewStyle()
 
 	buttonStyle := lipgloss.NewStyle().Width(40).Align(lipgloss.Right)
 
@@ -27,12 +28,94 @@ func (m model) matchesTopView() string {
 }
 
 func (m model) matchesView() string {
-	bottomStyle := lipgloss.NewStyle()
+	matchesMap := make(map[string][]match)
+
+	matchesDates := make([]string, 0)
+
+	for _, match := range m.matches {
+		matchDate := match.utcDate.Format(time.DateOnly)
+		if _, exists := matchesMap[matchDate]; !exists {
+			matchesDates = append(matchesDates, matchDate)
+		}
+
+		matchesMap[matchDate] = append(matchesMap[matchDate], match)
+	}
+
+	dateStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("230")).
+		Background(lipgloss.Color("25")).
+		Padding(0, 1).
+		Bold(true)
+
+	teamStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("255")).
+		Background(lipgloss.Color("236")).
+		Padding(0, 1)
+
+	scoreStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("230")).
+		Background(lipgloss.Color("31")).
+		Padding(0, 1).
+		Bold(true)
+
+	rowStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("252")).
+		Background(lipgloss.Color("237")).
+		Padding(0, 1)
+
+	maxHomeWidth := 0
+	maxAwayWidth := 0
+	for _, match := range m.matches {
+		if w := lipgloss.Width(match.homeTeam); w > maxHomeWidth {
+			maxHomeWidth = w
+		}
+		if w := lipgloss.Width(match.awayTeam); w > maxAwayWidth {
+			maxAwayWidth = w
+		}
+	}
+
+	// Keep the rows compact while still aligning team names.
+	if maxHomeWidth > 36 {
+		maxHomeWidth = 36
+	}
+	if maxAwayWidth > 36 {
+		maxAwayWidth = 36
+	}
+	if maxHomeWidth < 12 {
+		maxHomeWidth = 12
+	}
+	if maxAwayWidth < 12 {
+		maxAwayWidth = 12
+	}
+
+	s := ""
+	for _, md := range matchesDates {
+		s += dateStyle.Render(md) + "\n"
+
+		for _, match := range matchesMap[md] {
+			kickoff := match.utcDate.Local().Format("15:04")
+			home := lipgloss.NewStyle().Width(maxHomeWidth).Render(match.homeTeam)
+			away := lipgloss.NewStyle().Width(maxAwayWidth).Render(match.awayTeam)
+
+			row := lipgloss.JoinHorizontal(
+				lipgloss.Top,
+				teamStyle.Render(home),
+				scoreStyle.Render(match.score),
+				teamStyle.Render(away),
+				rowStyle.Render(kickoff),
+			)
+
+			s += row + "\n"
+		}
+		s += "\n"
+	}
 
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
 		m.matchesTopView(),
-		bottomStyle.Render(m.matchesTable.View()))
+		"",
+		s,
+	)
 }
 
 func (m model) RightView() string {
@@ -58,7 +141,7 @@ func (m model) RightView() string {
 
 func (m model) View() string {
 	leftStyle := lipgloss.NewStyle().Width(40).Padding(0, 1)
-	rightStyle := lipgloss.NewStyle().Width(80).Padding(0, 1)
+	rightStyle := lipgloss.NewStyle().Width(100).Padding(0, 1)
 
 	page := lipgloss.JoinHorizontal(
 		lipgloss.Top,

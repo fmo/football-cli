@@ -9,7 +9,7 @@ type standingsTable struct {
 	table table.Model
 }
 
-func (st standingsTable) New() *standingsTable {
+func NewStandingsTable() *standingsTable {
 	columns := []table.Column{
 		{Title: "Position", Width: 8},
 		{Title: "Team", Width: 30},
@@ -36,41 +36,6 @@ func (st standingsTable) New() *standingsTable {
 	t.SetStyles(s)
 
 	return &standingsTable{
-		table: t,
-	}
-}
-
-type matchesTable struct {
-	table table.Model
-}
-
-func (mt matchesTable) New() *matchesTable {
-	columns := []table.Column{
-		{Title: "Home Team", Width: 20},
-		{Title: "Away Team", Width: 20},
-		{Title: "Score", Width: 10},
-	}
-
-	t := table.New(
-		table.WithColumns(columns),
-		table.WithHeight(12),
-	)
-
-	s := table.DefaultStyles()
-	s.Header = s.Header.
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		BorderTop(true).
-		BorderBottom(true).
-		Bold(false)
-
-	s.Selected = s.Selected.
-		Foreground(lipgloss.Color("229")).
-		Background(lipgloss.Color("57")).
-		Bold(false)
-	t.SetStyles(s)
-
-	return &matchesTable{
 		table: t,
 	}
 }
