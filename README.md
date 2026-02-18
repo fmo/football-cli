@@ -14,5 +14,6 @@ Data comes from Football Data API, so you will need an api key from https://www.
 
 ```
 go build -o football-cli main.go
+
 API_KEY=your-api-key-to-football-data football-cli
 ```
