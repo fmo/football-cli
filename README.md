@@ -5,3 +5,14 @@
 
 ### Standings
 <img width="686" height="420" alt="Screenshot 2026-02-14 at 18 47 18" src="https://github.com/user-attachments/assets/160c2288-3008-472e-ba91-6a5a5e0be7b0" />
+
+## Football Data API
+
+Data comes from Football Data API, so you will need an api key from https://www.football-data.org/ 
+
+## Install
+
+```
+go build -o football-cli main.go
+API_KEY=your-api-key-to-football-data football-cli
+```
