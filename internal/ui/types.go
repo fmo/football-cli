@@ -11,6 +11,10 @@ type matchesMsg struct {
 	matches []match
 }
 
+type selectedTeamMsg struct {
+	teamName string
+}
+
 type errMsg struct {
 	err error
 }

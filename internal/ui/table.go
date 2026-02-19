@@ -20,6 +20,7 @@ func NewStandingsTable() *standingsTable {
 		table.WithColumns(columns),
 		table.WithHeight(21),
 		table.WithWidth(50),
+		table.WithFocused(true),
 	)
 
 	s := table.DefaultStyles()

@@ -8,6 +8,10 @@ import (
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	if m.tableSelectionView {
+		return m.UpdateTeamView(msg)
+	}
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -35,6 +39,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if item.Title() == "Refresh Data" {
 					return m, refreshHandler
 				}
+				if item.Title() == "Standings" {
+					m.tableSelectionView = true
+				}
 			}
 		}
 	case matchesMsg:
@@ -53,12 +60,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.list.SetSize(msg.Width-h, msg.Height-v)
 	}
 
-	var listCmd, tableCmd tea.Cmd
+	var listCmd tea.Cmd
 
 	m.list, listCmd = m.list.Update(msg)
-	m.table, tableCmd = m.table.Update(msg)
 
-	return m, tea.Batch(tableCmd, listCmd)
+	return m, listCmd
 }
 
 func buildRows(teams []team) []table.Row {
@@ -70,4 +76,34 @@ func buildRows(teams []team) []table.Row {
 	}
 
 	return rows
+}
+
+func (m model) UpdateTeamView(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "q":
+			if m.teamDetailView {
+				m.teamDetailView = false
+				return m, nil
+			}
+
+			m.tableSelectionView = false
+			m.table.SetCursor(0)
+			return m, nil
+		case "enter":
+			m.teamDetailView = true
+			return m, func() tea.Msg {
+				return selectedTeamMsg{m.table.SelectedRow()[1]}
+			}
+		}
+	case selectedTeamMsg:
+		m.selectedTeam = msg.teamName
+	}
+
+	var tableCmd tea.Cmd
+
+	m.table, tableCmd = m.table.Update(msg)
+
+	return m, tableCmd
 }

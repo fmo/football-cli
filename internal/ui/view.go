@@ -120,6 +120,10 @@ func (m model) matchesView() string {
 }
 
 func (m model) RightView() string {
+	if m.teamDetailView {
+		return m.selectedTeam
+	}
+
 	baseStyle := lipgloss.NewStyle().
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(lipgloss.Color("240"))
