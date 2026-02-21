@@ -124,6 +124,10 @@ func (m model) RightView() string {
 		return m.selectedTeam
 	}
 
+	if m.teamMatches != nil {
+		fmt.Println("matches will be shown here")
+	}
+
 	baseStyle := lipgloss.NewStyle().
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(lipgloss.Color("240"))

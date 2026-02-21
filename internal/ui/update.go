@@ -46,6 +46,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case matchesMsg:
 		m.matches = msg.matches
+	case teamMatchesMsg:
+		m.teamMatches = msg.matches
 	case standingsMsg:
 		m.currentMatchDay = msg.currentMatchDay
 		m.teams = msg.teams
@@ -99,6 +101,7 @@ func (m model) UpdateTeamView(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case selectedTeamMsg:
 		m.selectedTeam = msg.teamName
+		return m, teamMatchesHandler(msg.teamName)
 	}
 
 	var tableCmd tea.Cmd

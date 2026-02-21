@@ -14,6 +14,7 @@ type model struct {
 	matchesTables      []table.Model
 	matchesDates       []string
 	matches            []match
+	teamMatches        []match
 	refreshSuccess     string
 	err                error
 	currentMatchDay    int
@@ -23,6 +24,7 @@ type model struct {
 }
 
 type team struct {
+	id       int
 	position int
 	name     string
 	points   int

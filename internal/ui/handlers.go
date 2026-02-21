@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"net/http"
 	"os"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	footballdataapi "github.com/fmo/football-data-api"
@@ -33,7 +31,7 @@ func refreshHandler() tea.Msg {
 }
 
 func standingsHandler() tea.Msg {
-	var resp *footballdataapi.RespCompStandings
+	var resp *footballdataapi.StandingsResponse
 
 	log.Println("reading standing data from the file")
 
@@ -50,10 +48,8 @@ func standingsHandler() tea.Msg {
 	if err != nil {
 		log.Println("making api call for standings")
 
-		client := footballdataapi.NewClient(&http.Client{Timeout: 10 * time.Second})
-		compReq := footballdataapi.NewReqCompStandings(client)
-
-		resp, err = compReq.Do(footballdataapi.PL, seasonYear)
+		client := footballdataapi.NewClient()
+		resp, err := client.Standings.Fetch(footballdataapi.PL, seasonYear)
 		if err != nil {
 			log.Println("cant get response:", err)
 		}
@@ -73,6 +69,7 @@ func standingsHandler() tea.Msg {
 	for _, s := range resp.Standings {
 		team := team{}
 		for _, t := range s.Table {
+			team.id = t.Team.ID
 			team.position = t.Position
 			team.name = t.Team.Name
 			team.points = t.Points
@@ -85,7 +82,7 @@ func standingsHandler() tea.Msg {
 
 func matchesHandler(currentMatchDay int) tea.Cmd {
 	return func() tea.Msg {
-		var resp *footballdataapi.RespMatches
+		var resp *footballdataapi.MatchesResponse
 
 		log.Println("reading matches data form the file")
 
@@ -103,10 +100,8 @@ func matchesHandler(currentMatchDay int) tea.Cmd {
 		if err != nil {
 			log.Printf("requesting matches for season: %d, matchday: %d\n", seasonYear, currentMatchDay)
 
-			client := footballdataapi.NewClient(&http.Client{Timeout: 10 * time.Second})
-			request := footballdataapi.NewMatches(client)
-
-			resp, err = request.Do(footballdataapi.PL, seasonYear, currentMatchDay)
+			client := footballdataapi.NewClient()
+			resp, err := client.Matches.Fetch(footballdataapi.PL, seasonYear, currentMatchDay)
 			if err != nil {
 				return nil
 			}
@@ -132,6 +127,14 @@ func matchesHandler(currentMatchDay int) tea.Cmd {
 		}
 
 		return mm
+	}
+}
+
+func teamMatchesHandler(teamName string) tea.Cmd {
+	return func() tea.Msg {
+		tm := teamMatchesMsg{}
+
+		return tm
 	}
 }
 
