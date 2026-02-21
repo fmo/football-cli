@@ -2,6 +2,7 @@ package ui
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
@@ -88,9 +89,9 @@ func (m model) matchesView() string {
 		maxAwayWidth = 12
 	}
 
-	s := ""
+	s := strings.Builder{}
 	for _, md := range matchesDates {
-		s += dateStyle.Render(md) + "\n"
+		s.Write([]byte(dateStyle.Render(md) + "\n"))
 
 		for _, match := range matchesMap[md] {
 			kickoff := match.utcDate.Local().Format("15:04")
@@ -105,20 +106,28 @@ func (m model) matchesView() string {
 				rowStyle.Render(kickoff),
 			)
 
-			s += row + "\n"
+			s.Write([]byte(row + "\n"))
 		}
-		s += "\n"
+		s.Write([]byte("\n"))
 	}
 
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
 		m.matchesTopView(),
 		"",
-		s,
+		s.String(),
 	)
 }
 
 func (m model) RightView() string {
+	if m.teamDetailView {
+		return m.selectedTeam
+	}
+
+	if m.teamMatches != nil {
+		fmt.Println("matches will be shown here")
+	}
+
 	baseStyle := lipgloss.NewStyle().
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(lipgloss.Color("240"))
